@@ -93,38 +93,61 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             
-        let reuseId = "pin"
+        let reuseId = "statePin"
+        let usReuseId = "usMarker"
         let state = annotation.title as? String ?? ""
         let stateData = ctData[state]
             
+        let deaths = stateData?.death ?? 0
+        // print( "Pin for \(state) represents \(deaths) deaths" )
+        var color = UIColor.red
+        if deaths < 10 {
+            color = .green
+        } else if deaths < 50 {
+            color = .cyan
+        } else if deaths < 100 {
+            color = .blue
+        } else if deaths < 500 {
+            color = .purple
+        } else if deaths < 1000 {
+            color = .magenta
+        } else if deaths < 5000 {
+            color = .yellow
+        } else if deaths < 10000 {
+            color = .orange
+        }
+
+        if ( annotation.title == "US" )
+        {
+            //print( "Found the US marker" )
+            // We want the US pin to stand out, so we use a marker instead of a pin
+            var markerView = mapView.dequeueReusableAnnotationView(withIdentifier: usReuseId ) as? MKMarkerAnnotationView
+            if markerView == nil {
+                //print( "No view for US marker - creating one" )
+                markerView = MKMarkerAnnotationView( annotation: annotation, reuseIdentifier: usReuseId )
+                markerView!.canShowCallout = true
+                markerView!.rightCalloutAccessoryView = UIButton( type: .detailDisclosure )
+                markerView!.clusteringIdentifier = usReuseId
+            } else {
+                print( "Reusing MKMarkerAnnotationView for US marker" )
+                markerView!.annotation = annotation
+            }
+            markerView!.markerTintColor = color
+            markerView!.displayPriority = .required
+            return markerView
+        }
+        
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
 
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.canShowCallout = true
             pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+            pinView!.clusteringIdentifier = reuseId
         } else {
             pinView!.annotation = annotation
         }
-        let deaths = stateData?.death ?? 0
-        print( "Pin for \(state) represents \(deaths) deaths" )
-        if deaths < 10 {
-            pinView!.pinTintColor = .green
-        } else if deaths < 50 {
-            pinView!.pinTintColor = .cyan
-        } else if deaths < 100 {
-            pinView!.pinTintColor = .blue
-        } else if deaths < 500 {
-            pinView!.pinTintColor = .purple
-        } else if deaths < 1000 {
-            pinView!.pinTintColor = .magenta
-        } else if deaths < 5000 {
-            pinView!.pinTintColor = .yellow
-        } else if deaths < 10000 {
-            pinView!.pinTintColor = .orange
-        } else {
-            pinView!.pinTintColor = .red
-        }
+        pinView!.pinTintColor = color
 
         return pinView
     }
