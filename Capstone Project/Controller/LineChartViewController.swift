@@ -11,6 +11,9 @@ import Charts
 import TinyConstraints
 
 class LineChartViewController: UIViewController, ChartViewDelegate {
+    
+    var selectedState : String?
+    var selectedMetric : String?
 
     @IBOutlet weak var lineChartView: LineChartView!
     

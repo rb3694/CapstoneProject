@@ -8,13 +8,30 @@
 
 import UIKit
 import CoreData
+import MapKit
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    let defaultMapCenter = CTClient.GeoCenters.States["US"]
+    let defaultSpan = MKCoordinateSpan( latitudeDelta: 90.0, longitudeDelta: 60.0 )
+    let defaultMetric = "deaths"
+
+    func checkIfFirstLaunch() {
+        if !UserDefaults.standard.bool(forKey: CTClient.Defaults.HasLaunched) {
+            UserDefaults.standard.set(true, forKey: CTClient.Defaults.HasLaunched)
+            UserDefaults.standard.set(defaultMapCenter!.latitude, forKey: CTClient.Defaults.MapCenterLatitude)
+            UserDefaults.standard.set(defaultMapCenter!.longitude, forKey: CTClient.Defaults.MapCenterLongitude)
+            UserDefaults.standard.set(defaultSpan.latitudeDelta, forKey: CTClient.Defaults.MapLatDelta)
+            UserDefaults.standard.set(defaultSpan.longitudeDelta, forKey: CTClient.Defaults.MapLongDelta)
+            UserDefaults.standard.set(defaultMetric, forKey: CTClient.Defaults.Metric)
+        }
+    }
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // checkIfFirstLaunch()
         return true
     }
 

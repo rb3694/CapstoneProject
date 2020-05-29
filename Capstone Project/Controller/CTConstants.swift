@@ -25,6 +25,19 @@ extension CTClient {
         static let MapCenterLongitude = "MapCenterLongitude"
         static let MapLongDelta = "MapLongDelta"
         static let MapLatDelta = "MapLatDelta"
+        static let Metric = "Metric"
+    }
+    
+    struct Metrics {
+        static let Deaths = "Deaths"
+        static let CurrentVentilators = "Ventilators (current)"
+        static let CumulativeVentilators = "Ventilators (cumulative)"
+        static let CurrentICUs = "ICU (current)"
+        static let CumulativeICUs = "ICU (cumulative)"
+        static let CurrentHospitalizations = "Hospitalizations (current)"
+        static let CumulativeHospitalizations = "Hospitalizations (cumulative)"
+        static let Positives = "Positive Tests"
+        static let metricsList = [ Metrics.Deaths, Metrics.CurrentVentilators, Metrics.CumulativeVentilators, Metrics.CurrentICUs, Metrics.CumulativeICUs, Metrics.CurrentHospitalizations, Metrics.CumulativeHospitalizations, Metrics.Positives ]
     }
     
     // MARK: HttpMethods
