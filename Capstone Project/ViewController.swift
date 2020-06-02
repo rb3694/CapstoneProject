@@ -23,14 +23,16 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     @IBOutlet weak var metricTextField: UITextField!
     
     fileprivate func createAnnotation(_ stateData: CTClient.CTData) {
-        // print( stateData.state + " deaths: \(stateData.death)" )
         let annotation = MKPointAnnotation()
         let metric = valueForSelectedMetric(ctData: stateData)
         annotation.title = stateData.state
-        annotation.subtitle = "\(metric) \(selectedMetric)"
+        if let metric = metric {
+            annotation.subtitle = "\(metric) \(selectedMetric)"
+        } else {
+            annotation.subtitle = "\(selectedMetric) Not Reported"
+        }
         if let coordinate = CTClient.GeoCenters.States[stateData.state] {
             annotation.coordinate = coordinate
-            // print( "Setting location coordinates to (\(coordinate.latitude), \(coordinate.longitude))")
         } else {
             print( "!!! Unable to find geographic center for \(stateData.state) !!!" )
         }
@@ -38,8 +40,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         performUIUpdatesOnMain {
             self.mapView.addAnnotation( annotation )
         }
-        print( "Location \(annotation.title ?? "") with \(annotation.subtitle ?? "")")
-        // self.mapView.showAnnotations(annotations, animated: true)
     }
     
     func reloadAnnotations()
@@ -53,20 +53,22 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        metricPicker.dataSource = self
-        metricPicker.delegate = self
-        metricTextField.inputView = metricPicker
-        
-        print( "Map Range: (\(mapView.region.span.latitudeDelta),\(mapView.region.span.longitudeDelta))" )
-        /*
+                
         let mapCenter = CLLocationCoordinate2D( latitude: UserDefaults.standard.double(forKey: CTClient.Defaults.MapCenterLatitude ), longitude: UserDefaults.standard.double(forKey: CTClient.Defaults.MapCenterLongitude) )
         let mapSpan = MKCoordinateSpan( latitudeDelta: UserDefaults.standard.double(forKey: CTClient.Defaults.MapLatDelta), longitudeDelta: UserDefaults.standard.double(forKey: CTClient.Defaults.MapLongDelta) )
         let mapRegion = MKCoordinateRegion(center: mapCenter, span: mapSpan)
         mapView.setRegion(mapRegion, animated: true)
-        selectedMetric = UserDefaults.standard.string(forKey: CTClient.Defaults.Metric);
-        */
+        selectedMetric = UserDefaults.standard.string(forKey: CTClient.Defaults.Metric) ?? CTClient.Metrics.Deaths
         
         metricTextField.text = selectedMetric
+        metricPicker.dataSource = self
+        metricPicker.delegate = self
+        var row = 0
+        while row < CTClient.Metrics.metricsList.count && CTClient.Metrics.metricsList[row] != selectedMetric {
+            row += 1
+        }
+        metricPicker.selectRow( row, inComponent: 0, animated: false )
+        metricTextField.inputView = metricPicker
 
         // Get the current data for all 50 states plus 6 territories of the US
         CTClient.sharedInstance().getCurrentData() { ( result, error ) in
@@ -135,31 +137,41 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         self.view.endEditing(true)
 
         UserDefaults.standard.set( selectedMetric, forKey: CTClient.Defaults.Metric )
-        print( "Selected metric is now '\(selectedMetric)'" )
         reloadAnnotations()
     }
     
-    func valueForSelectedMetric( ctData: CTClient.CTData) -> Int {
+    func valueForSelectedMetric( ctData: CTClient.CTData) -> Int? {
+        var metric : Int?
         switch selectedMetric {
         case CTClient.Metrics.Deaths:
-            return ctData.death
+            metric = ctData.death
+            break
         case CTClient.Metrics.CurrentVentilators:
-            return ctData.onVentilatorCurrently
+            metric = ctData.onVentilatorCurrently
+            break
         case CTClient.Metrics.CumulativeVentilators:
-            return ctData.onVentilatorCumulative
+            metric = ctData.onVentilatorCumulative
+            break
         case CTClient.Metrics.CurrentICUs:
-            return ctData.inIcuCurrently
+            metric = ctData.inIcuCurrently
+            break
         case CTClient.Metrics.CumulativeICUs:
-            return ctData.inIcuCumulative
+            metric = ctData.inIcuCumulative
+            break
         case CTClient.Metrics.CurrentHospitalizations:
-            return ctData.hospitalizedCurrently
+            metric = ctData.hospitalizedCurrently
+            break
         case CTClient.Metrics.CumulativeHospitalizations:
-            return ctData.hospitalizedCumulative
+            metric = ctData.hospitalizedCumulative
+            break
         case CTClient.Metrics.Positives:
-            return ctData.positive
+            metric = ctData.positive
+            break
         default:
-            return 0
+            print("In default case!")
+            break
         }
+        return metric
     }
 
     func magnitudeForSelectedMetric( ctData: CTClient.CTData) -> Int {
@@ -206,36 +218,37 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         let metric = valueForSelectedMetric(ctData: stateData)
         let metricMagnitude = magnitudeForSelectedMetric(ctData: stateData)
 
-        var color = UIColor.red
-        if metric < metricMagnitude / 1000 {
-            color = .green
-        } else if metric < metricMagnitude / 200 {
-            color = .cyan
-        } else if metric < metricMagnitude / 100 {
-            color = .blue
-        } else if metric < metricMagnitude / 20 {
-            color = .purple
-        } else if metric < metricMagnitude / 10 {
-            color = .magenta
-        } else if metric < metricMagnitude / 2 {
-            color = .yellow
-        } else if metric < metricMagnitude {
-            color = .orange
+        var color = UIColor.clear
+        if let metric = metric {
+            if metric < metricMagnitude / 1000 {
+                color = .green
+            } else if metric < metricMagnitude / 200 {
+                color = .cyan
+            } else if metric < metricMagnitude / 100 {
+                color = .blue
+            } else if metric < metricMagnitude / 20 {
+                color = .purple
+            } else if metric < metricMagnitude / 10 {
+                color = .magenta
+            } else if metric < metricMagnitude / 2 {
+                color = .yellow
+            } else if metric < metricMagnitude {
+                color = .orange
+            } else {
+                color = .red
+            }
         }
 
         if ( annotation.title == "US" )
         {
-            //print( "Found the US marker" )
             // We want the US pin to stand out, so we use a marker instead of a pin
             var markerView = mapView.dequeueReusableAnnotationView(withIdentifier: usReuseId ) as? MKMarkerAnnotationView
             if markerView == nil {
-                //print( "No view for US marker - creating one" )
                 markerView = MKMarkerAnnotationView( annotation: annotation, reuseIdentifier: usReuseId )
                 markerView!.canShowCallout = true
                 markerView!.rightCalloutAccessoryView = UIButton( type: .detailDisclosure )
                 markerView!.clusteringIdentifier = usReuseId
             } else {
-                print( "Reusing MKMarkerAnnotationView for US marker" )
                 markerView!.annotation = annotation
             }
             markerView!.markerTintColor = color
@@ -264,9 +277,16 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         if control == view.rightCalloutAccessoryView {
             let selectedAnnotation = view.annotation as? MKPointAnnotation
             mapView.deselectAnnotation( view.annotation, animated: true )
+            guard let stateData = ctData[selectedAnnotation?.title ?? "XX"] else {
+                print("Can't find state data for map pin tap!")
+                return
+            }
+            if valueForSelectedMetric(ctData: stateData ) == nil {
+                // No need to draw graphs for metrics that aren't reported.
+                return
+            }
             selectedState = selectedAnnotation?.title
-            //performSegue( withIdentifier: segueID, sender: self )
-            let vc = (storyboard!.instantiateViewController(withIdentifier: "LineChartViewController") as? LineChartViewController)!
+            let vc = (storyboard!.instantiateViewController(withIdentifier: "ComboChartViewController") as? ComboChartViewController)!
             vc.selectedState = selectedState
             vc.selectedMetric = selectedMetric
             self.navigationController!.pushViewController( vc, animated: true)

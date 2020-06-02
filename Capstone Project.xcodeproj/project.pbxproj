@@ -19,6 +19,7 @@
 		15940510247DC0DC009DD98F /* CTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594050F247DC0DC009DD98F /* CTClient.swift */; };
 		15940512247DC1A8009DD98F /* CTConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15940511247DC1A8009DD98F /* CTConstants.swift */; };
 		15940514247DF87C009DD98F /* CTConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15940513247DF87C009DD98F /* CTConvenience.swift */; };
+		159405362484D4B5009DD98F /* ComboChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159405352484D4B5009DD98F /* ComboChartViewController.swift */; };
 		A2AF1326F9CB0EE1EF956522 /* Pods_Capstone_Project.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7A7AC25DDB2A16B0F8EBAE6 /* Pods_Capstone_Project.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		1594050F247DC0DC009DD98F /* CTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTClient.swift; sourceTree = "<group>"; };
 		15940511247DC1A8009DD98F /* CTConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTConstants.swift; sourceTree = "<group>"; };
 		15940513247DF87C009DD98F /* CTConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTConvenience.swift; sourceTree = "<group>"; };
+		159405352484D4B5009DD98F /* ComboChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboChartViewController.swift; sourceTree = "<group>"; };
 		81B8940AE445E6619C6DE82F /* Pods-Capstone Project.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Capstone Project.release.xcconfig"; path = "Target Support Files/Pods-Capstone Project/Pods-Capstone Project.release.xcconfig"; sourceTree = "<group>"; };
 		B7A7AC25DDB2A16B0F8EBAE6 /* Pods_Capstone_Project.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Capstone_Project.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C768955F07F3871F2C290B16 /* Pods-Capstone Project.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Capstone Project.debug.xcconfig"; path = "Target Support Files/Pods-Capstone Project/Pods-Capstone Project.debug.xcconfig"; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				155BB9A4247D70700069E156 /* ViewController.swift */,
 				15940509247DBA6E009DD98F /* GCDBlackBox.swift */,
 				1594050D247DBBE8009DD98F /* LineChartViewController.swift */,
+				159405352484D4B5009DD98F /* ComboChartViewController.swift */,
 				1594050F247DC0DC009DD98F /* CTClient.swift */,
 				15940511247DC1A8009DD98F /* CTConstants.swift */,
 				15940513247DF87C009DD98F /* CTConvenience.swift */,
@@ -256,6 +259,7 @@
 				155BB9A1247D70700069E156 /* AppDelegate.swift in Sources */,
 				15940510247DC0DC009DD98F /* CTClient.swift in Sources */,
 				155BB9A3247D70700069E156 /* SceneDelegate.swift in Sources */,
+				159405362484D4B5009DD98F /* ComboChartViewController.swift in Sources */,
 				1594050A247DBA6E009DD98F /* GCDBlackBox.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

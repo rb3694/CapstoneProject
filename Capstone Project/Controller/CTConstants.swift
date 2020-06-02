@@ -139,38 +139,38 @@ extension CTClient {
     
     struct CTData : Codable {
         let state:                  String
-        let positive:               Int
-        let negative:               Int
-        let pending:                Int
-        let hospitalizedCurrently:  Int
-        let hospitalizedCumulative: Int
-        let inIcuCurrently:         Int
-        var inIcuCumulative:        Int
-        var onVentilatorCurrently:  Int
-        var onVentilatorCumulative: Int
-        var recovered:              Int
+        let positive:               Int?
+        let negative:               Int?
+        let pending:                Int?
+        let hospitalizedCurrently:  Int?
+        let hospitalizedCumulative: Int?
+        let inIcuCurrently:         Int?
+        var inIcuCumulative:        Int?
+        var onVentilatorCurrently:  Int?
+        var onVentilatorCumulative: Int?
+        var recovered:              Int?
         var hash:                   String
         var lastModified:           String
-        var death:                  Int
-        var totalTestResults:       Int
+        var death:                  Int?
+        var totalTestResults:       Int?
         var dataQualityGrade:       String
         
         init( _ jsonDictionary : [String:AnyObject] ) {
             self.state = (jsonDictionary["state"] as? String) ?? "US"
-            self.positive = jsonDictionary["positive"] as? Int ?? 0
-            self.negative = jsonDictionary["negative"] as? Int ?? 0
-            self.pending = jsonDictionary["pending"] as? Int ?? 0
-            self.hospitalizedCurrently = jsonDictionary["hospitalizedCurrently"] as? Int ?? 0
-            self.hospitalizedCumulative = jsonDictionary["hospitalizedCumulative"] as? Int ?? 0
-            self.inIcuCurrently = jsonDictionary["inIcuCurrently"] as? Int ?? 0
-            self.inIcuCumulative = jsonDictionary["inIcuCumulative"] as? Int ?? 0
-            self.onVentilatorCurrently = jsonDictionary["onVentilatorCurrently"] as? Int ?? 0
-            self.onVentilatorCumulative = jsonDictionary["onVentilatorCumulative"] as? Int ?? 0
-            self.recovered = jsonDictionary["recovered"] as? Int ?? 0
+            self.positive = jsonDictionary["positive"] as? Int
+            self.negative = jsonDictionary["negative"] as? Int
+            self.pending = jsonDictionary["pending"] as? Int
+            self.hospitalizedCurrently = jsonDictionary["hospitalizedCurrently"] as? Int
+            self.hospitalizedCumulative = jsonDictionary["hospitalizedCumulative"] as? Int
+            self.inIcuCurrently = jsonDictionary["inIcuCurrently"] as? Int
+            self.inIcuCumulative = jsonDictionary["inIcuCumulative"] as? Int
+            self.onVentilatorCurrently = jsonDictionary["onVentilatorCurrently"] as? Int
+            self.onVentilatorCumulative = jsonDictionary["onVentilatorCumulative"] as? Int
+            self.recovered = jsonDictionary["recovered"] as? Int
             self.hash = jsonDictionary["hash"] as? String ?? ""
             self.lastModified = jsonDictionary["lastModified"] as? String ?? ""
-            self.death = jsonDictionary["death"] as? Int ?? 0
-            self.totalTestResults = jsonDictionary["totalTestResults"] as? Int ?? 0
+            self.death = jsonDictionary["death"] as? Int
+            self.totalTestResults = jsonDictionary["totalTestResults"] as? Int
             self.dataQualityGrade = jsonDictionary["dataQualityGrade"] as? String ?? ""
         }
     }
