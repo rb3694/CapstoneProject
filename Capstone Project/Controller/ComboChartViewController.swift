@@ -16,6 +16,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     var sevenDayTrend = 0
     var lastVisitedTrend = 0
     var lastVisitedIndex = -1
+    var ctData: [CTClient.CTData] = []
 
     //     @IBOutlet weak var comboChartView: CombinedChartView!
     // var oldcomboChartView: CombinedChartView!
@@ -55,8 +56,25 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         
         comboChartView.animate(xAxisDuration: 1.0)
         
-        setData()
-
+        // Get the historical data for the selected state
+        CTClient.sharedInstance().getHistoricalData( selectedState! ) { ( result, error ) in
+            if error != nil {
+                print( "ERROR: \(String(describing: error))" )
+            } else {
+                let theData = result as! [AnyObject]
+                var x = theData.count;
+                while x > 0 {
+                    x -= 1
+                    let stateData = CTClient.CTData( theData[x] as! [String : AnyObject] )
+                    self.ctData.append( stateData )
+                }
+            }
+            performUIUpdatesOnMain {
+                self.setData()
+            }
+        }
+        
+        
     }
     
     func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
@@ -65,8 +83,14 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     
     func setData() {
         let data = CombinedChartData()
+        
+        var barChartData: [BarChartDataEntry] = []
 
-        let set1 = BarChartDataSet(entries: barChartData, label: "Hospitalizations")
+        for x in 0..<ctData.count {
+            barChartData.append( BarChartDataEntry( x: Double(x), y: Double( ctData[x].valueForMetric( selectedMetric! ) ?? 0 ) ) )
+            print("x: \(x), y: \(barChartData[x].y)")
+        }
+        let set1 = BarChartDataSet(entries: barChartData, label: selectedMetric! )
         set1.setColor(UIColor(red: 60/255, green: 220/255, blue: 78/255, alpha: 1))
         //set1.valueTextColor = UIColor(red: 60/255, green: 220/255, blue: 78/255, alpha: 1)
         set1.valueFont = .systemFont(ofSize: 10)
@@ -82,7 +106,6 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         // Here is the other half of the workaround to keep the last
         // bar from being half as wide as the others.  Source: StackOverflow
         comboChartView.xAxis.axisMaximum = Double(set1.count) - 0.5;
-
 
         //let set1 = LineChartDataSet(entries: chartData, label: "Hospitalizations")
         //set1.drawCirclesEnabled = false
@@ -101,8 +124,10 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
             var count = 0.0
             var i = max( 0, x-6 )
             while i <= x {
-                accum = accum + barChartData[i].y
-                count = count + 1.0
+                if ( ctData[x].valueForMetric( selectedMetric! ) != nil ) {
+                    accum = accum + barChartData[i].y
+                    count = count + 1.0
+                }
                 i += 1
             }
             if ( count > 0 )
@@ -173,7 +198,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         comboChartView.data = data
     }
 
-    let barChartData: [BarChartDataEntry] = [
+    /* let barChartData: [BarChartDataEntry] = [
         BarChartDataEntry(x: 1.0, y: 0.0),
         BarChartDataEntry(x: 2.0, y: 0.0),
         BarChartDataEntry(x: 3.0, y: 0.0),
@@ -206,6 +231,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         BarChartDataEntry(x: 30.0, y: 192.0),
         BarChartDataEntry(x: 31.0, y: 185.0)
      ]
+     */
 
     /*
     // MARK: - Navigation

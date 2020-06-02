@@ -24,7 +24,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     
     fileprivate func createAnnotation(_ stateData: CTClient.CTData) {
         let annotation = MKPointAnnotation()
-        let metric = valueForSelectedMetric(ctData: stateData)
+        let metric = stateData.valueForMetric( selectedMetric )
         annotation.title = stateData.state
         if let metric = metric {
             annotation.subtitle = "\(metric) \(selectedMetric)"
@@ -140,40 +140,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         reloadAnnotations()
     }
     
-    func valueForSelectedMetric( ctData: CTClient.CTData) -> Int? {
-        var metric : Int?
-        switch selectedMetric {
-        case CTClient.Metrics.Deaths:
-            metric = ctData.death
-            break
-        case CTClient.Metrics.CurrentVentilators:
-            metric = ctData.onVentilatorCurrently
-            break
-        case CTClient.Metrics.CumulativeVentilators:
-            metric = ctData.onVentilatorCumulative
-            break
-        case CTClient.Metrics.CurrentICUs:
-            metric = ctData.inIcuCurrently
-            break
-        case CTClient.Metrics.CumulativeICUs:
-            metric = ctData.inIcuCumulative
-            break
-        case CTClient.Metrics.CurrentHospitalizations:
-            metric = ctData.hospitalizedCurrently
-            break
-        case CTClient.Metrics.CumulativeHospitalizations:
-            metric = ctData.hospitalizedCumulative
-            break
-        case CTClient.Metrics.Positives:
-            metric = ctData.positive
-            break
-        default:
-            print("In default case!")
-            break
-        }
-        return metric
-    }
-
     func magnitudeForSelectedMetric( ctData: CTClient.CTData) -> Int {
         switch selectedMetric {
         case CTClient.Metrics.Deaths:
@@ -215,7 +181,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         let state = annotation.title as? String ?? ""
         let stateData = ctData[state]!
             
-        let metric = valueForSelectedMetric(ctData: stateData)
+        let metric = stateData.valueForMetric(selectedMetric)
         let metricMagnitude = magnitudeForSelectedMetric(ctData: stateData)
 
         var color = UIColor.clear
@@ -281,7 +247,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
                 print("Can't find state data for map pin tap!")
                 return
             }
-            if valueForSelectedMetric(ctData: stateData ) == nil {
+            if stateData.valueForMetric(selectedMetric) == nil {
                 // No need to draw graphs for metrics that aren't reported.
                 return
             }

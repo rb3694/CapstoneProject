@@ -40,12 +40,14 @@ class CTClient : NSObject {
         //-----------------------------------------------------------------------------------------
         // DEBUG CODE - Remove before release
         //-----------------------------------------------------------------------------------------
-        //print( request.httpMethod + " " + (request.url?.absoluteString ?? "") )
-        //print( request.allHTTPHeaderFields ?? "" )
-        //if let theBody = request.httpBody {
-        //  print( NSString( data: theBody, encoding: String.Encoding.utf8.rawValue )! )
-        //}
-        //print( "" )
+        if method == "daily" {
+            print( request.httpMethod + " " + (request.url?.absoluteString ?? "") )
+            print( request.allHTTPHeaderFields ?? "" )
+            if let theBody = request.httpBody {
+                print( NSString( data: theBody, encoding: String.Encoding.utf8.rawValue )! )
+            }
+            print( "" )
+        }
         //-----------------------------------------------------------------------------------------
         // END DEBUG CODE - Remove prior to release
         //-----------------------------------------------------------------------------------------
@@ -89,8 +91,10 @@ class CTClient : NSObject {
             //-----------------------------------------------------------------------------------------
             // DEBUG CODE - Remove prior to release
             //-----------------------------------------------------------------------------------------
-            //print( String(data: data, encoding: .utf8)! )
-            //print( "" )
+            if method == "daily" {
+                print( String(data: data, encoding: .utf8)! )
+                print( "" )
+            }
             //-----------------------------------------------------------------------------------------
             // END DEBUG CODE - Remove prior to release
             //-----------------------------------------------------------------------------------------

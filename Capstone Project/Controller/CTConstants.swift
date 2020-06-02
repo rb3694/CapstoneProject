@@ -139,6 +139,7 @@ extension CTClient {
     
     struct CTData : Codable {
         let state:                  String
+        let date:                   String
         let positive:               Int?
         let negative:               Int?
         let pending:                Int?
@@ -157,6 +158,11 @@ extension CTClient {
         
         init( _ jsonDictionary : [String:AnyObject] ) {
             self.state = (jsonDictionary["state"] as? String) ?? "US"
+            if jsonDictionary["date"] == nil {
+                self.date = "date not specified"
+            } else {
+                self.date = String(jsonDictionary["date"] as! Int)
+            }
             self.positive = jsonDictionary["positive"] as? Int
             self.negative = jsonDictionary["negative"] as? Int
             self.pending = jsonDictionary["pending"] as? Int
@@ -173,5 +179,39 @@ extension CTClient {
             self.totalTestResults = jsonDictionary["totalTestResults"] as? Int
             self.dataQualityGrade = jsonDictionary["dataQualityGrade"] as? String ?? ""
         }
+        
+        func valueForMetric(_ selectedMetric: String ) -> Int? {
+             var metric : Int?
+             switch selectedMetric {
+             case CTClient.Metrics.Deaths:
+                 metric = self.death
+                 break
+             case CTClient.Metrics.CurrentVentilators:
+                 metric = self.onVentilatorCurrently
+                 break
+             case CTClient.Metrics.CumulativeVentilators:
+                 metric = self.onVentilatorCumulative
+                 break
+             case CTClient.Metrics.CurrentICUs:
+                 metric = self.inIcuCurrently
+                 break
+             case CTClient.Metrics.CumulativeICUs:
+                 metric = self.inIcuCumulative
+                 break
+             case CTClient.Metrics.CurrentHospitalizations:
+                 metric = self.hospitalizedCurrently
+                 break
+             case CTClient.Metrics.CumulativeHospitalizations:
+                 metric = self.hospitalizedCumulative
+                 break
+             case CTClient.Metrics.Positives:
+                 metric = self.positive
+                 break
+             default:
+                 print("In default case!")
+                 break
+             }
+             return metric
+         }
     }
 }
