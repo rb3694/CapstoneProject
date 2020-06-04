@@ -25,9 +25,12 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     
     @IBOutlet weak var sevenDayTrendLabel: UILabel!
     @IBOutlet weak var lastVisitTrendLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
         titleLabel.text = (selectedState ?? "??") + " Covid-19 " + (selectedMetric ?? "??")
         comboChartView.backgroundColor = .systemBlue
         //comboChartView.centerInSuperview()
@@ -57,7 +60,13 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         comboChartView.animate(xAxisDuration: 1.0)
         
         // Get the historical data for the selected state
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         CTClient.sharedInstance().getHistoricalData( selectedState! ) { ( result, error ) in
+            performUIUpdatesOnMain {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
             if error != nil {
                 print( "ERROR: \(String(describing: error))" )
             } else {

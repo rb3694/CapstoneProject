@@ -21,6 +21,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var metricTextField: UITextField!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     fileprivate func createAnnotation(_ stateData: CTClient.CTData) {
         let annotation = MKPointAnnotation()
@@ -53,7 +54,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+
         let mapCenter = CLLocationCoordinate2D( latitude: UserDefaults.standard.double(forKey: CTClient.Defaults.MapCenterLatitude ), longitude: UserDefaults.standard.double(forKey: CTClient.Defaults.MapCenterLongitude) )
         let mapSpan = MKCoordinateSpan( latitudeDelta: UserDefaults.standard.double(forKey: CTClient.Defaults.MapLatDelta), longitudeDelta: UserDefaults.standard.double(forKey: CTClient.Defaults.MapLongDelta) )
         let mapRegion = MKCoordinateRegion(center: mapCenter, span: mapSpan)
@@ -71,7 +74,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         metricTextField.inputView = metricPicker
 
         // Get the current data for all 50 states plus 6 territories of the US
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         CTClient.sharedInstance().getCurrentData() { ( result, error ) in
+            performUIUpdatesOnMain {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
             if error != nil {
                 print( "ERROR: \(String(describing: error))" )
             } else {
@@ -85,12 +94,18 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         }
         
         // Get the aggregate data for the entire US
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         CTClient.sharedInstance().getCurrentData( "US" ) { ( result, error ) in
+            performUIUpdatesOnMain {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
             if error != nil {
                 print( "ERROR: \(String(describing: error))" )
             } else {
                 var theData: [String:AnyObject]
-                    theData = (result?[0] ?? [:]) as! [String:AnyObject]
+                theData = (result?[0] ?? [:]) as! [String:AnyObject]
                 let stateData = CTClient.CTData( theData )
                 self.ctData[stateData.state] = stateData
                 self.createAnnotation( stateData )
