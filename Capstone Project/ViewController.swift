@@ -32,7 +32,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         } else {
             annotation.subtitle = "\(selectedMetric) Not Reported"
         }
-        if let coordinate = CTClient.GeoCenters.States[stateData.state] {
+        if let coordinate = CTClient.States.GeoCenters[stateData.state] {
             annotation.coordinate = coordinate
         } else {
             print( "!!! Unable to find geographic center for \(stateData.state) !!!" )
@@ -112,24 +112,24 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             }
         }
 
-            /*--------------------------------------------------------------------------------
-             * This is how I originally tried to get the coordinates for all of the states,
-             * but apparently the geocoder shuts down with error 2 (network error) if you
-             * try to do more than 50 forward geocode requests in quick succession.  It's also
-             * super slow.  So I came up with the GeoCenters dictionary instead.
-             ---------------------------------------------------------------------------------
-            if self.annotations.count > 0 {
-                // Process the first annotation location name to convert it to coordinates.
-                // The completionHandler will process the next annotations in succession.
-                var state = self.annotations[0].title ?? ""
-                if state.uppercased() != "US" {
-                    state = state.uppercased() + ", US"
-                }
-                self.geocoder.geocodeAddressString( state ) { ( placemarks, error ) in
-                    self.processGeocodeResponse( index: 0, withPlacemarks: placemarks, error: error )
-                }
+        /*--------------------------------------------------------------------------------
+         * This is how I originally tried to get the coordinates for all of the states,
+         * but apparently the geocoder shuts down with error 2 (network error) if you
+         * try to do more than 50 forward geocode requests in quick succession.  It's also
+         * super slow.  So I came up with the GeoCenters dictionary instead.
+         ---------------------------------------------------------------------------------
+         if self.annotations.count > 0 {
+            // Process the first annotation location name to convert it to coordinates.
+            // The completionHandler will process the next annotations in succession.
+            var state = self.annotations[0].title ?? ""
+            if state.uppercased() != "US" {
+                state = state.uppercased() + ", US"
             }
-            ----------------------------------------------------------------------------------- */
+            self.geocoder.geocodeAddressString( state ) { ( placemarks, error ) in
+                self.processGeocodeResponse( index: 0, withPlacemarks: placemarks, error: error )
+            }
+         }
+         ----------------------------------------------------------------------------------- */
     }
     
     // MARK: - PickerViewDelegate
@@ -228,7 +228,11 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
                 markerView = MKMarkerAnnotationView( annotation: annotation, reuseIdentifier: usReuseId )
                 markerView!.canShowCallout = true
                 markerView!.rightCalloutAccessoryView = UIButton( type: .detailDisclosure )
-                markerView!.clusteringIdentifier = usReuseId
+                // I keep getting mysterious, random crashes with error message
+                // -[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance
+                // So I'm going to disable clustering to try to avoid them.  See here and below.
+                // markerView!.clusteringIdentifier = usReuseId
+                markerView!.clusteringIdentifier = nil
             } else {
                 markerView!.annotation = annotation
             }
@@ -243,7 +247,12 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.canShowCallout = true
             pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-            pinView!.clusteringIdentifier = reuseId
+            // I keep getting mysterious, random crashes with error message
+            // -[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance
+            // So I'm going to disable clustering to try to avoid them.  See here and above.
+            // (I don't really want clustering anyway, can't click on clustered pin to get a graph)
+            // pinView!.clusteringIdentifier = reuseId
+            pinView!.clusteringIdentifier = nil
         } else {
             pinView!.annotation = annotation
         }
@@ -343,16 +352,5 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         }
     }
     
-    // MARK: - Navigation
-
-    // Set up the context to share with the PhotoAlbum view
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == segueID {
-            let vc = segue.destination as! LineChartViewController
-            vc.selectedState = selectedState
-            vc.selectedMetric = selectedMetric
-        }
-    }
-
 }
 

@@ -40,14 +40,14 @@ class CTClient : NSObject {
         //-----------------------------------------------------------------------------------------
         // DEBUG CODE - Remove before release
         //-----------------------------------------------------------------------------------------
-        if method == "daily" {
-            print( request.httpMethod + " " + (request.url?.absoluteString ?? "") )
-            print( request.allHTTPHeaderFields ?? "" )
-            if let theBody = request.httpBody {
-                print( NSString( data: theBody, encoding: String.Encoding.utf8.rawValue )! )
-            }
-            print( "" )
-        }
+        //if method == "daily" {
+        //    print( request.httpMethod + " " + (request.url?.absoluteString ?? "") )
+        //    print( request.allHTTPHeaderFields ?? "" )
+        //    if let theBody = request.httpBody {
+        //        print( NSString( data: theBody, encoding: String.Encoding.utf8.rawValue )! )
+        //     }
+        //    print( "" )
+        //}
         //-----------------------------------------------------------------------------------------
         // END DEBUG CODE - Remove prior to release
         //-----------------------------------------------------------------------------------------
@@ -91,10 +91,10 @@ class CTClient : NSObject {
             //-----------------------------------------------------------------------------------------
             // DEBUG CODE - Remove prior to release
             //-----------------------------------------------------------------------------------------
-            if method == "daily" {
-                print( String(data: data, encoding: .utf8)! )
-                print( "" )
-            }
+            //if method == "daily" {
+            //    print( String(data: data, encoding: .utf8)! )
+            //    print( "" )
+            //}
             //-----------------------------------------------------------------------------------------
             // END DEBUG CODE - Remove prior to release
             //-----------------------------------------------------------------------------------------
@@ -129,11 +129,11 @@ class CTClient : NSObject {
         components.host = CovidTrack.APIHost
         components.path = CovidTrack.APIPath
         if let state = state {
-            let stateUpper = state.uppercased()
-            if stateUpper == "US" {
+            let stateLower = state.lowercased()
+            if stateLower == "us" {
                 components.path = components.path + CovidTrack.US
             } else {
-                components.path = components.path + CovidTrack.States + stateUpper + "/"
+                components.path = components.path + CovidTrack.States + stateLower + "/"
             }
         } else {
             components.path = components.path + CovidTrack.States

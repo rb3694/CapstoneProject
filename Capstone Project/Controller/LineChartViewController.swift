@@ -10,6 +10,8 @@ import UIKit
 import Charts
 import TinyConstraints
 
+// This is no longer used in the capstone project.  Using CombinationChartView instead
+// Just wanted to save this in case I need to cannibalize the code
 class LineChartViewController: UIViewController, ChartViewDelegate {
     
     var selectedState : String?
@@ -130,16 +132,4 @@ class LineChartViewController: UIViewController, ChartViewDelegate {
         ChartDataEntry(x: 30.0, y: 192.0),
         ChartDataEntry(x: 31.0, y: 185.0)
      ]
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

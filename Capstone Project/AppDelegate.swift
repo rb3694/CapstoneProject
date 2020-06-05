@@ -13,7 +13,7 @@ import MapKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    let defaultMapCenter = CTClient.GeoCenters.States["US"]
+    let defaultMapCenter = CTClient.States.GeoCenters["US"]
     let defaultSpan = MKCoordinateSpan( latitudeDelta: 90.0, longitudeDelta: 60.0 )
     let defaultMetric = CTClient.Metrics.Deaths
 

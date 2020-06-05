@@ -12,27 +12,6 @@ class StatsTableViewController: UITableViewController {
     let reuseIdentifier = "StatsTableCell"
     var selectedState: String?
     var ctData: CTClient.CTData?
-    let stateNames = [  "US": "United States",
-                        "AL": "Alabama", "AK": "Alaska", "AS": "American Samoa",
-                        "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
-                        "CO": "Colorado", "CT": "Connecticut", "DE": "Deleware",
-                        "DC": "District of Columbia", "FL": "Florida", "GA": "Georgia",
-                        "GU": "Guam", "HI": "Hawaii", "ID": "Idaho",
-                        "IL": "Illinois", "IN": "Indiana", "IA": "Iowa",
-                        "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana",
-                        "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts",
-                        "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi",
-                        "MO": "Missouri", "MT": "Montana", "NE": "Nebraska",
-                        "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey",
-                        "NM": "New Mexico", "NY": "New York", "NC": "North Carolina",
-                        "ND": "North Dakota", "MP": "Northern Mariana Islands",
-                        "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon",
-                        "PA": "Pennsylvania", "PR": "Puerto Rico", "RI": "Rhode Island",
-                        "SC": "South Carolina", "SD": "South Dakota", "TN": "Tennessee",
-                        "TX": "Texas", "VI": "US Virgin Islands", "UT": "Utah",
-                        "VT": "Vermont", "VA": "Virginia", "WA": "Washington",
-                        "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"
-                     ]
 
     var statNames = [ "State",
                       CTClient.Metrics.Deaths,
@@ -86,7 +65,7 @@ class StatsTableViewController: UITableViewController {
         cell.textLabel?.font = UIFont(name: "HelveticaNeue-Bold", size: 18.0)
 
         if statName == "State" {
-            cell.detailTextLabel?.text = stateNames[selectedState ?? "Unknown"]
+            cell.detailTextLabel?.text = CTClient.States.Names[selectedState ?? "Unknown"]
         } else {
             let statValue = ctData?.valueForMetric( statName )
             if let statValue = statValue {
@@ -98,50 +77,5 @@ class StatsTableViewController: UITableViewController {
 
         return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
