@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 import Charts
 
 class ComboChartViewController: UIViewController, ChartViewDelegate {
@@ -14,6 +15,9 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     var selectedState : String?
     var selectedMetric : String?
     var ctData: [CTClient.CTData] = []
+    var dataController : DataController!
+    var fetchedResultsController: NSFetchedResultsController<LastVisit>!
+    var lastVisit: LastVisit?
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var comboChartView: CombinedChartView!
@@ -21,6 +25,59 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     @IBOutlet weak var sevenDayTrendLabel: UILabel!
     @IBOutlet weak var lastVisitTrendLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    // MARK:  CoreData
+    
+    // Get a list of the user's predefined pins from CoreData
+    fileprivate func setupFetchedResultsController() {
+        let predicate = NSPredicate(format: "(state == %@) AND (metric = %@)", selectedState!, selectedMetric! )
+
+        let fetchRequest:NSFetchRequest<LastVisit> = LastVisit.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        fetchRequest.predicate = predicate
+        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: "covid19Tracker" )
+        // fetchedResultsController.delegate = self
+        do {
+            print( "Performing fetch" )
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError( "The fetch could not be performed. \(error.localizedDescription)" )
+        }
+        
+        if fetchedResultsController.fetchedObjects!.count > 0 {
+            lastVisit = fetchedResultsController.fetchedObjects?.last
+            if let usersLastVisit = lastVisit {
+                print( "LastVisit was on \(String(describing: usersLastVisit.date)) for \(String(describing: usersLastVisit.state)) \(String(describing: usersLastVisit.metric)) with a value of \(usersLastVisit.value)" )
+            } else {
+                print( "LastVisit is not defined" )
+            }
+        } else {
+            print( "No fetched results" )
+        }
+    }
+
+    // Store last visit info in CoreData
+    func saveLastVisit( date: String,  value: Int ) {
+        print( "Saving last visit at \(date), value: \(value)" )
+        if lastVisit == nil {
+            lastVisit = LastVisit( context: dataController.viewContext )
+        }
+        lastVisit?.metric = selectedMetric
+        lastVisit?.state = selectedState
+        lastVisit?.date = date
+        lastVisit?.value = Int32( value )
+        do {
+            try dataController.viewContext.save()
+        } catch let error as NSError {
+            let alert = UIAlertController(title: "CoreData Failure", message: "Unable to store last visit into CoreData: Error \(error.localizedDescription), \(error.userInfo)", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "CoreData Failed", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        // Refetch so new last visit will be in fetchedResults
+        //try? fetchedResultsController.performFetch()
+        
+    }
     
     func isDeltaMetric(_ selectedMetric: String? ) -> Bool {
         if let selectedMetric = selectedMetric {
@@ -41,6 +98,10 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         super.viewDidLoad()
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
+        
+        // Initialize CoreData and load the model
+        setupFetchedResultsController()
+
         var newText = ""
         if ( isDeltaMetric( selectedMetric ) ) {
             newText = " New"
@@ -108,12 +169,12 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         var lastMetricDate : String?
         var sevenDayTrend = 0
         var lastVisitedTrend = 0
-        var lastVisitedIndex = 50   // Latest bar seen by user
-        var lastVisitedDate : String?
+        var lastVisitedIndex = -1   // Latest bar seen by user
 
         for x in 0..<ctData.count {
-            if lastVisitedIndex < 0 && lastVisitedDate == ctData[x].date {
+            if lastVisitedIndex < 0 && lastVisit?.date == ctData[x].date {
                 lastVisitedIndex = x
+                print( "LastVisitedIndex is \(x)" )
             }
             var metricValue : Int? = ctData[x].valueForMetric( selectedMetric! )
             if x > 0 && metricValue != nil && lastMetricValue != nil && isDeltaMetric( selectedMetric ) {
@@ -228,6 +289,10 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         data.setDrawValues(false)
         
         comboChartView.data = data
+        
+        if lastMetricDate != nil && lastMetricValue != nil {
+            saveLastVisit(date: lastMetricDate!, value: lastMetricValue! )
+        }
     }
 
 }

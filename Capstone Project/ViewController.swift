@@ -18,6 +18,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     var selectedState : String?
     var selectedMetric = CTClient.Metrics.Deaths
     var metricPicker = UIPickerView()
+    var dataController : DataController!
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var metricTextField: UITextField!
@@ -277,6 +278,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             }
             selectedState = selectedAnnotation?.title
             let vc = (storyboard!.instantiateViewController(withIdentifier: "ComboChartViewController") as? ComboChartViewController)!
+            vc.dataController = dataController
             vc.selectedState = selectedState
             vc.selectedMetric = selectedMetric
             self.navigationController!.pushViewController( vc, animated: true)

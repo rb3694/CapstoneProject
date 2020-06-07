@@ -11,12 +11,24 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    let dataController = DataController( modelName: "Capstone_Project" )
+    var loaded = false
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        
+        // Create the data controller object and inject it into the first view
+        if !loaded {
+            dataController.load()
+        }
+        
+        let tabBarController = window?.rootViewController as! UITabBarController;
+        let navigationController = tabBarController.viewControllers?.first as! UINavigationController
+        let viewController = navigationController.topViewController as! ViewController
+        viewController.dataController = dataController
+
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 

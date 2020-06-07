@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,15 +12,54 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="freeMapImage" translatesAutoresizingMaskIntoConstraints="NO" id="cta-g8-1yS">
+                                <rect key="frame" x="0.0" y="57" width="414" height="713.5"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Capstone Project: Covid19 Tracker" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bh1-wB-VmI">
+                                <rect key="frame" x="0.0" y="31" width="414" height="125"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="125" id="Mee-Yt-n8q"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                <color key="textColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YED-nP-hcJ">
+                                <rect key="frame" x="10" y="760.5" width="394" height="101.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="101.5" id="sre-li-XtO"/>
+                                </constraints>
+                                <string key="text">Copyright 2020 By Socially Distant Software.  The statisitics displayed are freely available from covidtracking.com.  Please review the warnings and description of these statistics before utilizing this app for any purpose.  </string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="YED-nP-hcJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="BcH-uf-yhF"/>
+                            <constraint firstItem="YED-nP-hcJ" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="DHI-aA-RiZ"/>
+                            <constraint firstItem="Bh1-wB-VmI" firstAttribute="leading" secondItem="cta-g8-1yS" secondAttribute="leading" id="GY3-su-65m"/>
+                            <constraint firstItem="YED-nP-hcJ" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" constant="-10" id="M45-9f-LmI"/>
+                            <constraint firstItem="cta-g8-1yS" firstAttribute="bottom" secondItem="YED-nP-hcJ" secondAttribute="top" constant="10" id="Y5U-Le-APn"/>
+                            <constraint firstItem="Bh1-wB-VmI" firstAttribute="trailing" secondItem="cta-g8-1yS" secondAttribute="trailing" id="iCv-fR-jhg"/>
+                            <constraint firstItem="cta-g8-1yS" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="kOe-pV-P6R"/>
+                            <constraint firstItem="cta-g8-1yS" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="nnt-nI-68t"/>
+                            <constraint firstItem="Bh1-wB-VmI" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" constant="-13" id="pZG-73-ktS"/>
+                            <constraint firstItem="cta-g8-1yS" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="13" id="t8r-4S-G68"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="52.173913043478265" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="freeMapImage" width="900" height="1349"/>
+    </resources>
 </document>
