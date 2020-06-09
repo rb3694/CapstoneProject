@@ -260,11 +260,26 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
             sevenDayTrendLabel.textColor = .black
         }
         
-        if lastVisitedIndex > 0 {
+        if lastVisitedIndex >= 0 {
             if let lastValue = metricValues[(metricValues.count) - 1] {
                 if let prevValue = metricValues[lastVisitedIndex] {
-                    lastVisitedTrend = Int( lastValue - prevValue )
+                    lastVisitedTrend = lastValue - prevValue
+                } else {
+                    lastVisitedTrend = lastValue
                 }
+            } else {
+                // Last value was unreported - treat it as 0
+                if let prevValue = metricValues[lastVisitedIndex] {
+                    lastVisitedTrend = -prevValue
+                } else {
+                    lastVisitedTrend = 0
+                }
+            }
+        } else {
+            if let lastValue = metricValues[(metricValues.count) - 1] {
+                lastVisitedTrend = lastValue
+            } else {
+                lastVisitedTrend = 0
             }
         }
         if lastVisitedTrend > 0 {
