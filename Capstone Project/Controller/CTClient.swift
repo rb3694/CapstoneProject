@@ -8,7 +8,6 @@
 //  Class to interact with Covid Tracker Project REST API
 
 import Foundation
-import MapKit
 
 class CTClient : NSObject {
 
@@ -16,8 +15,6 @@ class CTClient : NSObject {
 
     // shared session
     var session = URLSession.shared
-    var collection : UICollectionView?
-    lazy var geocoder = CLGeocoder()
 
     // MARK: httpTask
     
@@ -147,25 +144,6 @@ class CTClient : NSObject {
         return components.url!
     }
     
-    // MARK: - Geocoding
-    
-    func lookUpLocation(_ place: CLLocationCoordinate2D, completionHandler: @escaping (CLPlacemark?)
-                    -> Void ) {
-                
-        // Look up the location and pass it to the completion handler
-        geocoder.reverseGeocodeLocation( CLLocation( latitude: place.latitude, longitude: place.longitude ), completionHandler: { (placemarks, error) in
-                if error == nil {
-                    let firstLocation = placemarks?[0]
-                    completionHandler(firstLocation)
-                }
-                else {
-                 // An error occurred during geocoding.
-                    completionHandler(nil)
-                }
-            }
-        )
-    }
-
     // MARK: Shared Instance
     
     class func sharedInstance() -> CTClient {

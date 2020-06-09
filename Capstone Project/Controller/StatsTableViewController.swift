@@ -24,13 +24,22 @@ class StatsTableViewController: UITableViewController {
                       CTClient.Metrics.Positives
                     ]
     
+    fileprivate func displayAlert(_ title: String, message: String ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: title, style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Get the current data for the selected state
         CTClient.sharedInstance().getCurrentData( selectedState ) { ( result, error ) in
             if error != nil {
-                print( "ERROR: \(String(describing: error))" )
+                performUIUpdatesOnMain {
+                    self.displayAlert( "HTTP Fetch Failure", message: "Unable to retrieve current data for \(self.selectedState ?? "US"), ERROR: \(String(describing: error))" )
+                }
             } else {
                 var theData: [String:AnyObject]
                 if self.selectedState == "US" {

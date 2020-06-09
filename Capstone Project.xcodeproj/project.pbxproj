@@ -15,8 +15,8 @@
 		155BB9AB247D70700069E156 /* Capstone_Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 155BB9A9247D70700069E156 /* Capstone_Project.xcdatamodeld */; };
 		155BB9AD247D70710069E156 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 155BB9AC247D70710069E156 /* Assets.xcassets */; };
 		155BB9B0247D70710069E156 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 155BB9AE247D70710069E156 /* LaunchScreen.storyboard */; };
+		15890D50248DA37C00213486 /* CustomXAxisFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15890D4F248DA37C00213486 /* CustomXAxisFormatter.swift */; };
 		1594050A247DBA6E009DD98F /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15940509247DBA6E009DD98F /* GCDBlackBox.swift */; };
-		1594050E247DBBE8009DD98F /* LineChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594050D247DBBE8009DD98F /* LineChartViewController.swift */; };
 		15940510247DC0DC009DD98F /* CTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594050F247DC0DC009DD98F /* CTClient.swift */; };
 		15940512247DC1A8009DD98F /* CTConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15940511247DC1A8009DD98F /* CTConstants.swift */; };
 		15940514247DF87C009DD98F /* CTConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15940513247DF87C009DD98F /* CTConvenience.swift */; };
@@ -37,8 +37,8 @@
 		155BB9AC247D70710069E156 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		155BB9AF247D70710069E156 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		155BB9B1247D70710069E156 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		15890D4F248DA37C00213486 /* CustomXAxisFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomXAxisFormatter.swift; sourceTree = "<group>"; };
 		15940509247DBA6E009DD98F /* GCDBlackBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
-		1594050D247DBBE8009DD98F /* LineChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartViewController.swift; sourceTree = "<group>"; };
 		1594050F247DC0DC009DD98F /* CTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTClient.swift; sourceTree = "<group>"; };
 		15940511247DC1A8009DD98F /* CTConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTConstants.swift; sourceTree = "<group>"; };
 		15940513247DF87C009DD98F /* CTConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTConvenience.swift; sourceTree = "<group>"; };
@@ -101,7 +101,6 @@
 			children = (
 				155BB9A4247D70700069E156 /* ViewController.swift */,
 				15940509247DBA6E009DD98F /* GCDBlackBox.swift */,
-				1594050D247DBBE8009DD98F /* LineChartViewController.swift */,
 				159405352484D4B5009DD98F /* ComboChartViewController.swift */,
 				1594050F247DC0DC009DD98F /* CTClient.swift */,
 				15940511247DC1A8009DD98F /* CTConstants.swift */,
@@ -124,6 +123,7 @@
 		1594050C247DBAA3009DD98F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				15890D4F248DA37C00213486 /* CustomXAxisFormatter.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -263,7 +263,6 @@
 				15940512247DC1A8009DD98F /* CTConstants.swift in Sources */,
 				15940514247DF87C009DD98F /* CTConvenience.swift in Sources */,
 				155BB9AB247D70700069E156 /* Capstone_Project.xcdatamodeld in Sources */,
-				1594050E247DBBE8009DD98F /* LineChartViewController.swift in Sources */,
 				155BB9A5247D70700069E156 /* ViewController.swift in Sources */,
 				155BB9A1247D70700069E156 /* AppDelegate.swift in Sources */,
 				15940510247DC0DC009DD98F /* CTClient.swift in Sources */,
@@ -271,6 +270,7 @@
 				155BB9A3247D70700069E156 /* SceneDelegate.swift in Sources */,
 				159405382488A299009DD98F /* StateTableTableViewController.swift in Sources */,
 				159405362484D4B5009DD98F /* ComboChartViewController.swift in Sources */,
+				15890D50248DA37C00213486 /* CustomXAxisFormatter.swift in Sources */,
 				151ABACA248AED6900B6D47E /* DataController.swift in Sources */,
 				1594050A247DBA6E009DD98F /* GCDBlackBox.swift in Sources */,
 			);

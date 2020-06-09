@@ -39,7 +39,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: "covid19Tracker" )
         // fetchedResultsController.delegate = self
         do {
-            print( "Performing fetch" )
+            //print( "Performing fetch" )
             try fetchedResultsController.performFetch()
         } catch {
             fatalError( "The fetch could not be performed. \(error.localizedDescription)" )
@@ -47,19 +47,27 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         
         if fetchedResultsController.fetchedObjects!.count > 0 {
             lastVisit = fetchedResultsController.fetchedObjects?.last
+            /* ----------------- DEBUG CODE
             if let usersLastVisit = lastVisit {
                 print( "LastVisit was on \(String(describing: usersLastVisit.date)) for \(String(describing: usersLastVisit.state)) \(String(describing: usersLastVisit.metric)) with a value of \(usersLastVisit.value)" )
             } else {
                 print( "LastVisit is not defined" )
             }
+            ----------------------- DEBUG CODE */
         } else {
-            print( "No fetched results" )
+            // print( "No fetched results" )
         }
     }
 
+    fileprivate func displayAlert(_ title: String, message: String ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: title, style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     // Store last visit info in CoreData
     func saveLastVisit( date: String,  value: Int ) {
-        print( "Saving last visit at \(date), value: \(value)" )
+        // print( "Saving last visit at \(date), value: \(value)" )
         if lastVisit == nil {
             lastVisit = LastVisit( context: dataController.viewContext )
         }
@@ -70,13 +78,8 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         do {
             try dataController.viewContext.save()
         } catch let error as NSError {
-            let alert = UIAlertController(title: "CoreData Failure", message: "Unable to store last visit into CoreData: Error \(error.localizedDescription), \(error.userInfo)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "CoreData Failed", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            displayAlert("CoreData Failed", message: "Unable to store last visit into CoreData: Error \(error.localizedDescription)")
         }
-        // Refetch so new last visit will be in fetchedResults
-        //try? fetchedResultsController.performFetch()
-        
     }
     
     func isDeltaMetric(_ selectedMetric: String? ) -> Bool {
@@ -129,7 +132,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         // bar from being half as wide as the others.  Source: StackOverflow
         xAxis.axisMinimum = -0.5;
         
-        comboChartView.animate(xAxisDuration: 1.0)
+        comboChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
         
         // Get the historical data for the selected state
         activityIndicator.isHidden = false
@@ -140,7 +143,9 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
                 self.activityIndicator.isHidden = true
             }
             if error != nil {
-                print( "ERROR: \(String(describing: error))" )
+                performUIUpdatesOnMain{
+                    self.displayAlert( "HTTP Fetch failure", message: "Unable to retrieve historical data: \(String(describing: error))")
+                }
             } else {
                 let theData = result as! [AnyObject]
                 var x = theData.count;
@@ -157,7 +162,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
     }
     
     func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
-        print( entry )
+        // print( entry )
     }
     
     func setData() {
@@ -170,11 +175,12 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         var sevenDayTrend = 0
         var lastVisitedTrend = 0
         var lastVisitedIndex = -1   // Latest bar seen by user
+        let xAxis = comboChartView.xAxis
 
         for x in 0..<ctData.count {
             if lastVisitedIndex < 0 && lastVisit?.date == ctData[x].date {
                 lastVisitedIndex = x
-                print( "LastVisitedIndex is \(x)" )
+                // print( "LastVisitedIndex is \(x)" )
             }
             var metricValue : Int? = ctData[x].valueForMetric( selectedMetric! )
             if x > 0 && metricValue != nil && lastMetricValue != nil && isDeltaMetric( selectedMetric ) {
@@ -205,11 +211,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
             metricValues.append( metricValue )
         }
         let set1 = BarChartDataSet(entries: barChartData, label: selectedMetric! )
-        //set1.setColor(UIColor(red: 60/255, green: 220/255, blue: 78/255, alpha: 1))
-        print( "Stacked is \(set1.isStacked)" )
-        //set1.stackLabels = ["old", "new"]
         set1.colors = [ChartColorTemplates.material()[0], ChartColorTemplates.material()[2]]
-        //set1.valueTextColor = UIColor(red: 60/255, green: 220/255, blue: 78/255, alpha: 1)
         set1.valueFont = .systemFont(ofSize: 10)
         set1.axisDependency = .left
         
@@ -217,7 +219,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         
         // Here is the other half of the workaround to keep the last
         // bar from being half as wide as the others.  Source: StackOverflow
-        comboChartView.xAxis.axisMaximum = Double(set1.count) - 0.5;
+        xAxis.axisMaximum = Double(set1.count) - 0.5;
 
         var movingAverage: [ChartDataEntry] = []
         for x in 0..<set1.count {
@@ -254,9 +256,13 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
             sevenDayTrendLabel.text = "Stable"
             sevenDayTrendLabel.textColor = .black
         }
-        if ( lastVisitedIndex > 0 )
-        {
-            lastVisitedTrend = Int( movingAverage[movingAverage.count - 1].y - movingAverage[lastVisitedIndex].y )
+        
+        if lastVisitedIndex > 0 {
+            if let lastValue = metricValues[(metricValues.count) - 1] {
+                if let prevValue = metricValues[lastVisitedIndex] {
+                    lastVisitedTrend = Int( lastValue - prevValue )
+                }
+            }
         }
         if lastVisitedTrend > 0 {
             lastVisitTrendLabel.text = "Increasing"
@@ -272,14 +278,6 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         set2.setColor(UIColor(red: 240/255, green: 238/255, blue: 70/255, alpha: 1))
         set2.lineWidth = 2.5
         set2.mode = .cubicBezier
-        //set2.setCircleColor(UIColor(red: 240/255, green: 238/255, blue: 70/255, alpha: 1))
-        //set2.circleRadius = 5
-        //set2.circleHoleRadius = 2.5
-        //set2.fillColor = UIColor(red: 240/255, green: 238/255, blue: 70/255, alpha: 1)
-        //set2.drawValuesEnabled = true
-        //set2.valueFont = .systemFont(ofSize: 10)
-        //set2.valueTextColor = UIColor(red: 240/255, green: 238/255, blue: 70/255, alpha: 1)
-        //set2.highlightColor = .systemGreen
         
         set2.axisDependency = .left
         let lineData = LineChartData(dataSet: set2)
@@ -289,6 +287,10 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         data.setDrawValues(false)
         
         comboChartView.data = data
+
+        xAxis.valueFormatter = CustomXAxisFormatter( ctData: ctData )
+        xAxis.avoidFirstLastClippingEnabled = true
+        xAxis.forceLabelsEnabled = true
         
         if lastMetricDate != nil && lastMetricValue != nil {
             saveLastVisit(date: lastMetricDate!, value: lastMetricValue! )

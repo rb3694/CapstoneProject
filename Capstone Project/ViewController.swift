@@ -24,6 +24,12 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
     @IBOutlet weak var metricTextField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    fileprivate func displayAlert(_ title: String, message: String ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: title, style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
     fileprivate func createAnnotation(_ stateData: CTClient.CTData) {
         let annotation = MKPointAnnotation()
         let metric = stateData.valueForMetric( selectedMetric )
@@ -36,7 +42,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
         if let coordinate = CTClient.States.GeoCenters[stateData.state] {
             annotation.coordinate = coordinate
         } else {
-            print( "!!! Unable to find geographic center for \(stateData.state) !!!" )
+            performUIUpdatesOnMain {
+                self.displayAlert( "Geo Lookup Failure", message: "Unable to find geographic center for \(stateData.state)" )
+            }
         }
         self.annotations.append( annotation )
         performUIUpdatesOnMain {
@@ -83,7 +91,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
                 self.activityIndicator.isHidden = true
             }
             if error != nil {
-                print( "ERROR: \(String(describing: error))" )
+                performUIUpdatesOnMain {
+                    self.displayAlert( "HTTP Fetch Failure", message: "Unable to retrieve current data, \(String(describing: error))")
+                }
             } else {
                 let theData = result as! [AnyObject]
                 for x in 0..<theData.count {
@@ -103,7 +113,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
                 self.activityIndicator.isHidden = true
             }
             if error != nil {
-                print( "ERROR: \(String(describing: error))" )
+                performUIUpdatesOnMain {
+                    self.displayAlert( "HTTP Fetch Failure", message: "Unable to retrieve US aggregate current data, \(String(describing: error))")
+                }
             } else {
                 var theData: [String:AnyObject]
                 theData = (result?[0] ?? [:]) as! [String:AnyObject]
@@ -229,9 +241,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
                 markerView = MKMarkerAnnotationView( annotation: annotation, reuseIdentifier: usReuseId )
                 markerView!.canShowCallout = true
                 markerView!.rightCalloutAccessoryView = UIButton( type: .detailDisclosure )
-                // I keep getting mysterious, random crashes with error message
-                // -[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance
-                // So I'm going to disable clustering to try to avoid them.  See here and below.
+                // I kept getting mysterious, random crashes with error message
+                // "-[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance"
+                // (I don't really want clustering anyway, can't click on clustered pin to get a graph)
+                // So I disabled clustering to try to avoid them.  See here and below.
                 // markerView!.clusteringIdentifier = usReuseId
                 markerView!.clusteringIdentifier = nil
             } else {
@@ -248,9 +261,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.canShowCallout = true
             pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-            // I keep getting mysterious, random crashes with error message
-            // -[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance
-            // So I'm going to disable clustering to try to avoid them.  See here and above.
+            // I kept getting mysterious, random crashes with error message
+            // "-[MKPointAnnotation memberAnnotations]: unrecognized selector sent to instance"
+            // So I disabled clustering to try to avoid them.  See here and above.
             // (I don't really want clustering anyway, can't click on clustered pin to get a graph)
             // pinView!.clusteringIdentifier = reuseId
             pinView!.clusteringIdentifier = nil
@@ -269,7 +282,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             let selectedAnnotation = view.annotation as? MKPointAnnotation
             mapView.deselectAnnotation( view.annotation, animated: true )
             guard let stateData = ctData[selectedAnnotation?.title ?? "XX"] else {
-                print("Can't find state data for map pin tap!")
+                // print("Can't find state data for map pin tap!")
                 return
             }
             if stateData.valueForMetric(selectedMetric) == nil {
@@ -284,11 +297,11 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate,
             self.navigationController!.pushViewController( vc, animated: true)
             return
         }
-        print( "###### ERROR: Unable to find selected pin!" )
+        // print( "###### ERROR: Unable to find selected pin!" )
     }
 
     
-    // MARK:  GEOCODING (no longer used)
+    // MARK:  GEOCODING (all of this code is no longer used)
 
     fileprivate func geocodeNextAnnotation(_ index: Int) {
         // Geocoder should be free now, get the next state's geographic center.

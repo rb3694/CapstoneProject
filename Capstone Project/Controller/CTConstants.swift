@@ -11,12 +11,6 @@ import MapKit
 
 extension CTClient {
     
-    // MARK: Configuration
-    
-    struct Configuration {
-        static let CellLimit = 25
-    }
-    
     // MARK: Defaults
     
     struct Defaults {
@@ -65,7 +59,7 @@ extension CTClient {
     // MARK: Geographic Centers
     
     // Avoid killing the network with 57 forward geocoding requests.
-    // Source:  GeoHack @ tools.wmflabs.org
+    // Data Source:  GeoHack @ tools.wmflabs.org
     
     struct States {
         static let GeoCenters: [String:CLLocationCoordinate2D] = [

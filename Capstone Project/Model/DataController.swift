@@ -50,7 +50,7 @@ extension DataController {
             return
         }
         if viewContext.hasChanges {
-            print( "Changes detected: autosaving..." )
+            //print( "Changes detected: autosaving..." )
             try? viewContext.save()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + interval ) {
