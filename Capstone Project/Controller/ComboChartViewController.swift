@@ -61,7 +61,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
 
     fileprivate func displayAlert(_ title: String, message: String ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: title, style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -178,7 +178,7 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
         let xAxis = comboChartView.xAxis
 
         for x in 0..<ctData.count {
-            if lastVisitedIndex < 0 && lastVisit?.date == ctData[x].date {
+            if lastVisit?.date == ctData[x].date {
                 lastVisitedIndex = x
                 // print( "LastVisitedIndex is \(x)" )
             }
@@ -201,14 +201,17 @@ class ComboChartViewController: UIViewController, ChartViewDelegate {
                 lastMetricValue = ctData[x].valueForMetric( selectedMetric! )
                 lastMetricDate = ctData[x].date
             }
-            if ( lastVisitedIndex > 0 && x > lastVisitedIndex ) {
+            metricValues.append( metricValue )
+        }
+        for x in 0..<metricValues.count {
+            let metricValue = metricValues[x]
+            if ( x > lastVisitedIndex ) {
                 // This value is new since the user's last visit.  Display value as "upper" stacked bar.
                 barChartData.append( BarChartDataEntry(x: Double(x), yValues: [0.0, Double( metricValue ?? 0 )] ) )
             } else {
                 // User has seen this data before.  Display as "lower" stacked bar.
                 barChartData.append( BarChartDataEntry(x: Double(x), yValues: [Double( metricValue ?? 0 ), 0.0] ) )
             }
-            metricValues.append( metricValue )
         }
         let set1 = BarChartDataSet(entries: barChartData, label: selectedMetric! )
         set1.colors = [ChartColorTemplates.material()[0], ChartColorTemplates.material()[2]]
